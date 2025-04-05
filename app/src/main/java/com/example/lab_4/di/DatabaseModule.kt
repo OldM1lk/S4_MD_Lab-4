@@ -1,24 +1,18 @@
 package com.example.lab_4.di
 
-import android.content.Context
+import android.app.Application
 import androidx.room.Room
 import com.example.lab_4.data.local.NoteDao
 import com.example.lab_4.data.local.NoteDatabase
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
 object DatabaseModule {
     @Provides
-    @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): NoteDatabase {
+    fun provideDatabase(application: Application): NoteDatabase {
         return Room.databaseBuilder(
-            context,
+            application,
             NoteDatabase::class.java,
             "note_database"
         ).build()

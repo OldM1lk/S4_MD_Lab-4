@@ -77,7 +77,7 @@ fun NoteCard(note: Note) {
             Text(
                 text = note.content,
                 style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
@@ -90,7 +90,7 @@ fun NotesScreenPreview() {
     Lab_4Theme(darkTheme = true) {
         val sampleNotes = listOf(
             Note(1, "Покупки", "Купить молоко, хлеб, сыр..."),
-            Note(2, "Идея", "Создать приложение для заметок")
+            Note(2, "Идея", "Создать приложение для заметок.")
         )
         NotesScreen(notes = sampleNotes, onAddNote = {})
     }

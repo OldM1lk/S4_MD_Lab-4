@@ -6,9 +6,7 @@ import com.example.lab_4.data.local.Note
 import com.example.lab_4.data.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,12 +15,18 @@ class NoteViewModel @Inject constructor(
     private val repository: NoteRepository
 ) : ViewModel() {
 
-    private val _notes: StateFlow<List<Note>> = repository.getAllNotes().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Lazily,
-        initialValue = emptyList()
-    )
+    private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes: StateFlow<List<Note>> = _notes
+
+    init {
+        getAllNotes()
+    }
+
+    fun getAllNotes() {
+        viewModelScope.launch {
+            _notes.value = repository.getAllNotes()
+        }
+    }
 
     fun addNote(note: Note) {
         viewModelScope.launch {
