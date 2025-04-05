@@ -7,6 +7,7 @@ import com.example.lab_4.data.local.NoteDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -15,9 +16,9 @@ import javax.inject.Singleton
 object DatabaseModule {
     @Provides
     @Singleton
-    fun provideDatabase(context: Context): NoteDatabase {
+    fun provideDatabase(@ApplicationContext context: Context): NoteDatabase {
         return Room.databaseBuilder(
-            context.applicationContext,
+            context,
             NoteDatabase::class.java,
             "note_database"
         ).build()
