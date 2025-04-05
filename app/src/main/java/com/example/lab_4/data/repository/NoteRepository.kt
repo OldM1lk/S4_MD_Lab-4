@@ -11,7 +11,6 @@ import javax.inject.Singleton
 @Singleton
 class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     fun getAllNotes(): Flow<List<Note>> = noteDao.getAllNotes()
-    //val notes: Flow<List<Note>> = noteDao.getAllNotes()
 
     suspend fun insertNote(note: Note) {
         withContext(Dispatchers.IO) {
