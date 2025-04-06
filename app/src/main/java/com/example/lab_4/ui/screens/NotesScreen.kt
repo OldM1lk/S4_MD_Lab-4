@@ -1,6 +1,7 @@
 package com.example.lab_4.ui.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,18 +12,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lab_4.data.local.Note
@@ -32,7 +34,8 @@ import com.example.lab_4.ui.theme.Lab_4Theme
 @OptIn(ExperimentalMaterial3Api::class)
 fun NotesScreen(
     notes: List<Note>,
-    onAddNote: () -> Unit
+    onAddNote: () -> Unit,
+    onDeleteNote: (Note) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -53,33 +56,53 @@ fun NotesScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(notes) {
-                NoteCard(it)
+                NoteCard(it, onDeleteNote)
             }
         }
     }
 }
 
 @Composable
-fun NoteCard(note: Note) {
+fun NoteCard(
+    note: Note,
+    onDeleteClick: (Note) -> Unit
+) {
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = note.title,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = note.content,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = note.title,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = note.content,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1
+                )
+            }
+
+            IconButton(
+                onClick = { onDeleteClick(note) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Удалить заметку",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }
@@ -89,9 +112,9 @@ fun NoteCard(note: Note) {
 fun NotesScreenPreview() {
     Lab_4Theme(darkTheme = true) {
         val sampleNotes = listOf(
-            Note(1, "Покупки", "Купить молоко, хлеб, сыр..."),
-            Note(2, "Идея", "Создать приложение для заметок.")
+            Note(1, "Покупки", "Купить молоко, хлеб, сыр"),
+            Note(2, "Идея", "Создать приложение для заметок")
         )
-        NotesScreen(notes = sampleNotes, onAddNote = {})
+        NotesScreen(notes = sampleNotes, onAddNote = {}, onDeleteNote = {})
     }
 }
