@@ -65,13 +65,22 @@ fun AddEditNoteScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        viewModel.updateNote(
-                            Note(
-                                id = noteId ?: 0,
-                                title = title,
-                                content = content
+                        if (noteId == null) {
+                            viewModel.addNote(
+                                Note(
+                                    title = title,
+                                    content = content
+                                )
                             )
-                        )
+                        } else {
+                            viewModel.updateNote(
+                                Note(
+                                    id = noteId,
+                                    title = title,
+                                    content = content
+                                )
+                            )
+                        }
                         navController.popBackStack()
                     }) {
                         Icon(
