@@ -1,5 +1,6 @@
 package com.example.lab_4.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,20 +24,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.lab_4.data.local.Note
+import com.example.lab_4.ui.NotesViewModel
 import com.example.lab_4.ui.theme.Lab_4Theme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun NotesScreen(
-    notes: List<Note>,
-    onAddNote: () -> Unit,
-    onDeleteNote: (Note) -> Unit
+    navController: NavController,
+    viewModel: NotesViewModel = hiltViewModel()
 ) {
+    val notes by viewModel.notes.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -45,7 +53,7 @@ fun NotesScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onAddNote
+                onClick = { navController.navigate("add_note") }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Добавить заметку")
             }
@@ -56,7 +64,11 @@ fun NotesScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(notes) {
-                NoteCard(it, onDeleteNote)
+                NoteCard(
+                    note = it,
+                    onClick = { navController.navigate("edit_note${it.id}") },
+                    onDelete = { viewModel.deleteNote(it) }
+                )
             }
         }
     }
@@ -65,12 +77,14 @@ fun NotesScreen(
 @Composable
 fun NoteCard(
     note: Note,
-    onDeleteClick: (Note) -> Unit
+    onClick: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
@@ -95,7 +109,7 @@ fun NoteCard(
             }
 
             IconButton(
-                onClick = { onDeleteClick(note) }
+                onClick = { onDelete() }
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -111,10 +125,8 @@ fun NoteCard(
 @Preview(showBackground = true)
 fun NotesScreenPreview() {
     Lab_4Theme(darkTheme = true) {
-        val sampleNotes = listOf(
-            Note(1, "Покупки", "Купить молоко, хлеб, сыр"),
-            Note(2, "Идея", "Создать приложение для заметок")
-        )
-        NotesScreen(notes = sampleNotes, onAddNote = {}, onDeleteNote = {})
+        val navController = rememberNavController()
+
+        NotesScreen(navController)
     }
 }

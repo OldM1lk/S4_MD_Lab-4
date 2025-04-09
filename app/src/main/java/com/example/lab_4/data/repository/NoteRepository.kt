@@ -9,21 +9,36 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
-    suspend fun getAllNotes(): List<Note> {
-        return withContext(Dispatchers.IO) {
-            return@withContext noteDao.getAllNotes()
-        }
-    }
+class NoteRepository @Inject constructor(
+    private val noteDao: NoteDao
+) {
     suspend fun insertNote(note: Note) {
         withContext(Dispatchers.IO) {
             noteDao.insertNote(note)
         }
     }
 
+    suspend fun updateNote(note: Note) {
+        withContext(Dispatchers.IO) {
+            noteDao.updateNote(note)
+        }
+    }
+
     suspend fun deleteNote(note: Note) {
         withContext(Dispatchers.IO) {
             noteDao.deleteNote(note)
+        }
+    }
+
+    suspend fun getAllNotes(): Flow<List<Note>> {
+        return withContext(Dispatchers.IO) {
+            return@withContext noteDao.getAllNotes()
+        }
+    }
+
+    suspend fun getNoteById(id: Int) : Note? {
+        return withContext(Dispatchers.IO) {
+            return@withContext noteDao.getNoteById(id)
         }
     }
 }

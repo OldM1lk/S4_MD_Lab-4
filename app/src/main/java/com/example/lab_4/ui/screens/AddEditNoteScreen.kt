@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,20 +25,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.lab_4.data.local.Note
+import com.example.lab_4.ui.NotesViewModel
 import com.example.lab_4.ui.theme.Lab_4Theme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AddEditNoteScreen(
+    noteId: Int?,
     navController: NavController,
-    initialTitle: String = "",
-    initialContent: String = "",
-    onSave: (String, String) -> Unit
+    viewModel: NotesViewModel = hiltViewModel()
 ) {
-    var title by remember { mutableStateOf(initialTitle) }
-    var content by remember { mutableStateOf(initialContent) }
+    var title by remember { mutableStateOf("Без названия") }
+    var content by remember { mutableStateOf("") }
+
+    LaunchedEffect(noteId) {
+        noteId?.let { id ->
+            viewModel.getNoteById(id)?.let { note ->
+                title = note.title
+                content = note.content
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -53,8 +65,13 @@ fun AddEditNoteScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        val finalTitle = title.ifBlank { "Без названия" }
-                        onSave(finalTitle, content)
+                        viewModel.updateNote(
+                            Note(
+                                id = noteId ?: 0,
+                                title = title,
+                                content = content
+                            )
+                        )
                         navController.popBackStack()
                     }) {
                         Icon(
@@ -99,6 +116,6 @@ fun AddEditNoteScreen(
 fun AddEditNoteScreenPreview() {
     Lab_4Theme(darkTheme = true) {
         val navController = rememberNavController()
-        AddEditNoteScreen(navController, onSave = { _, _ -> })
+        AddEditNoteScreen(1, navController)
     }
 }
