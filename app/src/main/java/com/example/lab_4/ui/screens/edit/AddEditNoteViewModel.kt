@@ -16,7 +16,7 @@ class AddEditNoteViewModel @Inject constructor(
     private val repository: NoteRepository
 ) : ViewModel() {
 
-    private val _currentNote = MutableStateFlow<Note?>(null)
+    private val _currentNote = MutableStateFlow<Note?>(Note(title = "", content = ""))
     val currentNote: StateFlow<Note?> = _currentNote
 
     fun updateTitleState(title: String) {

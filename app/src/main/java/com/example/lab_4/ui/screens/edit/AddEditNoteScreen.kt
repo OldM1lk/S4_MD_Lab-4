@@ -35,7 +35,7 @@ fun AddEditNoteScreen(
     navController: NavController,
     viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
-    var state = viewModel.currentNote.collectAsState()
+    val state = viewModel.currentNote.collectAsState()
 
     LaunchedEffect(noteId) {
         if (noteId != null) {

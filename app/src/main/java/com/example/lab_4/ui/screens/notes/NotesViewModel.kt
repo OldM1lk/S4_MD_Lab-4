@@ -22,25 +22,13 @@ class NotesViewModel @Inject constructor(
         getAllNotes()
     }
 
-    fun addNote(note: Note) {
-        viewModelScope.launch {
-            repository.insertNote(note)
-        }
-    }
-
-    fun updateNote(note: Note) {
-        viewModelScope.launch {
-            repository.updateNote(note)
-        }
-    }
-
     fun deleteNote(note: Note) {
         viewModelScope.launch {
             repository.deleteNote(note)
         }
     }
 
-    fun getAllNotes() {
+    private fun getAllNotes() {
         viewModelScope.launch {
             repository.getAllNotes().collect {
                 _notes.value = it
