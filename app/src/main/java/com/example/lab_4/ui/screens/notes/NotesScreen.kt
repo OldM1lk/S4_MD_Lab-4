@@ -1,4 +1,4 @@
-package com.example.lab_4.ui.screens
+package com.example.lab_4.ui.screens.notes
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -34,7 +34,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.lab_4.data.local.Note
-import com.example.lab_4.ui.NotesViewModel
 import com.example.lab_4.ui.theme.Lab_4Theme
 
 @Composable
@@ -66,7 +65,7 @@ fun NotesScreen(
             items(notes) {
                 NoteCard(
                     note = it,
-                    onClick = { navController.navigate("edit_note${it.id}") },
+                    onClick = { navController.navigate("edit_note/${it.id}") },
                     onDelete = { viewModel.deleteNote(it) }
                 )
             }
@@ -126,7 +125,6 @@ fun NoteCard(
 fun NotesScreenPreview() {
     Lab_4Theme(darkTheme = true) {
         val navController = rememberNavController()
-
         NotesScreen(navController)
     }
 }

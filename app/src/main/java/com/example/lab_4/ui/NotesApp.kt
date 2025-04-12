@@ -6,8 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.lab_4.ui.screens.AddEditNoteScreen
-import com.example.lab_4.ui.screens.NotesScreen
+import com.example.lab_4.ui.screens.edit.AddEditNoteScreen
+import com.example.lab_4.ui.screens.notes.NotesScreen
 
 @Composable
 fun NotesApp() {

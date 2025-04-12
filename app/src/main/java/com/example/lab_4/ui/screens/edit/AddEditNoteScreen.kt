@@ -1,4 +1,4 @@
-package com.example.lab_4.ui.screens
+package com.example.lab_4.ui.screens.edit
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,10 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.lab_4.data.local.Note
-import com.example.lab_4.ui.NotesViewModel
 import com.example.lab_4.ui.theme.Lab_4Theme
 
 @Composable
@@ -37,17 +33,13 @@ import com.example.lab_4.ui.theme.Lab_4Theme
 fun AddEditNoteScreen(
     noteId: Int?,
     navController: NavController,
-    viewModel: NotesViewModel = hiltViewModel()
+    viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
-    var title by remember { mutableStateOf("Без названия") }
-    var content by remember { mutableStateOf("") }
+    var state = viewModel.currentNote.collectAsState()
 
     LaunchedEffect(noteId) {
-        noteId?.let { id ->
-            viewModel.getNoteById(id)?.let { note ->
-                title = note.title
-                content = note.content
-            }
+        if (noteId != null) {
+            viewModel.getNoteById(noteId)
         }
     }
 
@@ -68,16 +60,16 @@ fun AddEditNoteScreen(
                         if (noteId == null) {
                             viewModel.addNote(
                                 Note(
-                                    title = title,
-                                    content = content
+                                    title = state.value?.title ?: "Без названия",
+                                    content = state.value?.content ?: ""
                                 )
                             )
                         } else {
                             viewModel.updateNote(
                                 Note(
                                     id = noteId,
-                                    title = title,
-                                    content = content
+                                    title = state.value?.title ?: "Без названия",
+                                    content = state.value?.content ?: ""
                                 )
                             )
                         }
@@ -99,8 +91,8 @@ fun AddEditNoteScreen(
                 .padding(16.dp),
         ) {
             OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
+                value = state.value?.title ?: "",
+                onValueChange = { viewModel.updateTitleState(it) },
                 label = { Text("Имя") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -109,8 +101,8 @@ fun AddEditNoteScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = content,
-                onValueChange = { content = it },
+                value = state.value?.content ?: "",
+                onValueChange = { viewModel.updateContentState(it) },
                 label = { Text("Напишите что-нибудь") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -125,6 +117,6 @@ fun AddEditNoteScreen(
 fun AddEditNoteScreenPreview() {
     Lab_4Theme(darkTheme = true) {
         val navController = rememberNavController()
-        AddEditNoteScreen(1, navController)
+        AddEditNoteScreen(null, navController)
     }
 }
